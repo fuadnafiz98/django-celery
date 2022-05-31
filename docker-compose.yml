@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  django:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+  celery:
+    build: .
+    command: celery -A core worker -l INFO
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - django
+      - redis
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: fuad1234
+      POSTGRES_USER: admin
+      POSTGRES_DB: django-celery
+    volumes:
+      - ${DB_NAME}:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+      - 54321:54321
+  redis:
+    image: "redis:alpine"
+    command: [ "redis-server", "--appendonly yes" ]
+    volumes:
+      - redis:/data
+
+volumes:
+  django-celery:
+  redis:
