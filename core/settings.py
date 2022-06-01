@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_celery_beat",
     "app",
 ]
 
@@ -77,9 +78,15 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "django-celery",
+        "USER": "admin",
+        "PASSWORD": "fuad1234",
+        "HOST": "postgres",
+        "PORT": "5432",
+        # all requests should be atomic.
+        "ATOMIC_REQUESTS": True,
+    },
 }
 
 
@@ -125,5 +132,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # celery configuration
+CELERY_TASK_TRACK_STARTED = True
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0")

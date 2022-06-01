@@ -16,6 +16,23 @@ services:
     depends_on:
       - postgres
       - redis
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ${DB_NAME}:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      - "54321:54321"
+  redis:
+    image: "redis:alpine"
+    command: [ "redis-server", "--appendonly yes" ]
+    volumes:
+      - redis:/data
   celery:
     build: .
     command: celery -A core worker -l INFO
@@ -24,24 +41,19 @@ services:
     depends_on:
       - django
       - redis
-  postgres:
-    image: postgres:13
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: fuad1234
-      POSTGRES_USER: admin
-      POSTGRES_DB: django-celery
+  flower:
+    build: .
+    container_name: flower
+    command: celery -A core flower --port=5555 --address=0.0.0.0
     volumes:
-      - ${DB_NAME}:/var/lib/postgresql/data
+      - .:/usr/src/app
     ports:
-      - 5432:5432
-      - 54321:54321
-  redis:
-    image: "redis:alpine"
-    command: [ "redis-server", "--appendonly yes" ]
-    volumes:
-      - redis:/data
-
+      - "5555:5555"
+    depends_on:
+      - celery
+      - django
+      - redis
 volumes:
   django-celery:
   redis:
+  celery:
