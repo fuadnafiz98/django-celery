@@ -1,7 +1,8 @@
+# Django Starter Template
+
 ## Commands 🥧
 
 ```bash
-
 $ poetry new $PROJECT_NAME
 $ poetry add django djangorestframework
 $ django-admin startproject core .
@@ -10,7 +11,7 @@ $ poetry add flower
 $ poetry add django-celery-beat
 ```
 
-### Error Descriptior 🎯
+### Error Descriptor 🎯
 
 1. celery hard time limit error:
 
