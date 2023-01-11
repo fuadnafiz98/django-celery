@@ -1,4 +1,4 @@
-version: "3.8rest_framework"
+version: "3.8"
 
 services:
   django:

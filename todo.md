@@ -1,4 +1,0 @@
-- [x] add **flower**
-- [x] add tasks
-- [x] connect django-admin with the celety tasks
-- [x] add celery beat
