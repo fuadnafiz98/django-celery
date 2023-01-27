@@ -12,20 +12,34 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#z3smxoaaqhu6@v%m+w#$c$2x^hqsk9n@bp73%jpova$dn2ego"
+DEBUG = True if os.environ.get("DEBUG") == "true" else False
+ENVIRONMENT = "development" if DEBUG else "production"
+
+ALLOWED_HOSTS = [*os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")]
+DOMAIN_NAME = os.environ.get("DOMAIN_NAME")
+
+_origins = [f"https://{host}" for host in ALLOWED_HOSTS]
+if os.environ.get("DJANGO_ALLOW_HTTP", False):
+    _origins += [f"http://{host}" for host in ALLOWED_HOSTS]
+CORS_ALLOWED_ORIGINS = tuple(_origins)
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -84,11 +98,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "django-celery",
-        "USER": "admin",
-        "PASSWORD": "fuad1234",
-        "HOST": "postgres",
-        "PORT": "5432",
+        "NAME": os.environ.get("DATABASE_NAME"),
+        "USER": os.environ.get("DATABASE_USER"),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+        "HOST": os.environ.get("DATABASE_HOST"),
+        "PORT":os.environ.get("DATABASE_PORT"),
         # all requests should be atomic.
         "ATOMIC_REQUESTS": True,
     },

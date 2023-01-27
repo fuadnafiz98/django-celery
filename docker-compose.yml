@@ -11,7 +11,7 @@ services:
       - "8000:8000"
     environment:
       - DEBUG=1
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
     depends_on:
@@ -21,11 +21,11 @@ services:
     image: postgres:13
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_DB: ${DATABASE_NAME}
     volumes:
-      - ${DB_NAME}:/var/lib/postgresql/data
+      - ${DATABASE_NAME}:/var/lib/postgresql/data
     ports:
       - "5432:5432"
       - "54321:54321"
